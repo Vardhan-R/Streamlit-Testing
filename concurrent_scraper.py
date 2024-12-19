@@ -364,7 +364,7 @@ with viewer:
 
 	# initialise the directory if it does not exist
 	if not os.path.isdir(images_dir):
-		os.mkdir(images_dir, 711)
+		os.mkdir(images_dir, 777)
 
 	all_images = {os.path.join(images_dir, img) for img in os.listdir(images_dir) if img.endswith(".png")}
 
