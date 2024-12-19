@@ -72,12 +72,15 @@ def main(n: int, max_workers: int, width: int, height: int, parser: str) -> None
 		
 		# resize the image, and save it in the images folder, as [post id].jpg
 		im = Image.open(BytesIO(s.get(img_lnk).content))
+		st.image(im)
 		resized_im = im.resize((width, height))
-		resized_im.save(f".\\images\\{post_id}.jpg")
+		resized_im.save(f"./images/{post_id}.jpg")
 		resized_im.close()
 		im.close()
 
 		hash_code = img_lnk.split('/')[4] # get the hash code of the post to save it later (for any future reconstruction of the post's URL)
+
+		st.write(str({"post id": post_id, "hash": hash_code, "rating": rating, "tags": general_tags}))
 
 		# if all the data was found successfully, then add an entry into the .csv file
 		with file_lock_1: # multiple workers should not try to write to the file simultaneously
@@ -305,7 +308,7 @@ def main(n: int, max_workers: int, width: int, height: int, parser: str) -> None
 			from_id = int(fp.readline().strip()) # get the post id of the next post to be processed
 	else: # if the file does not exist...
 		# then initialise it with "1", as that is the first post id to be processed
-		from_id = 1002001
+		from_id = 1004001
 		with open(cntr_txt, 'w') as fp:
 			fp.write(str(from_id))
 
