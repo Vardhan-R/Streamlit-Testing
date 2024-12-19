@@ -1,4 +1,7 @@
+streamlit
 beautifulsoup4
 pillow
 requests
-streamlit
+lxml
+html.parser
+html5lib

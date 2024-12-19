@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 from io import BytesIO
 from PIL import Image
-import csv, os, requests, sys, threading
+import csv, os, requests, threading
 import streamlit as st
 
 def main(n: int, max_workers: int, width: int, height: int, parser: str) -> None:
@@ -338,11 +338,18 @@ st.set_page_config("Scraper")
 st.title("Scraper")
 
 with st.form("args"):
-	n = int(st.text_input("Number of images to process"))
-	max_workers = int(st.text_input("Maximum workers"))
-	width = int(st.text_input("Width"))
-	height = int(st.text_input("Height"))
-	parser = st.selectbox("Parser", ["lxml", "lxml-xml", "html.parser", "html5lib"])
+	try:
+		n = int(st.text_input("Number of images to process", 100))
+		max_workers = int(st.text_input("Maximum workers", 15))
+		width = int(st.text_input("Width", 128))
+		height = int(st.text_input("Height", 128))
+		parser = st.selectbox("Parser", ["lxml", "lxml-xml", "html.parser", "html5lib"])
+	except:
+		n = 100
+		max_workers = 15
+		width = 128
+		height = 128
+		parser = "lxml"
 
-	if st.form_submit_button("Run"):
+	if st.form_submit_button():
 		main(n, max_workers, width, height, parser)
