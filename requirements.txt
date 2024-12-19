@@ -1,0 +1,9 @@
+bs4
+concurrent
+io
+PIL
+csv
+os
+requests
+threading
+streamlit
