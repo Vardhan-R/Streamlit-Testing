@@ -360,14 +360,13 @@ with scraper:
 with viewer:
 	st.title("Images")
 
-	images_dir = "images"
+	images_dir = "./images"
 
-	root_dir = "images"
 	all_images = []
 
-	for dirpath, _, filenames in os.walk(root_dir):
+	for dirpath, _, filenames in os.walk(images_dir):
 		for filename in filenames:
-			if filename.endswith(".png"):
+			if filename.endswith(".jpg"):
 				all_images.append(os.path.join(dirpath, filename))
 
 	# # initialise the directory if it does not exist
@@ -379,4 +378,4 @@ with viewer:
 	cols = st.columns([1, 1, 1])
 	for i, image_path in enumerate(all_images):
 		with cols[i % 3]:
-			st.image(image_path, caption=os.path.basename(image_path), use_column_width=True)
+			st.image(image_path, caption=os.path.basename(image_path), use_container_width=True)
