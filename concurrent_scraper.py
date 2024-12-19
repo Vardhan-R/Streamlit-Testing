@@ -360,7 +360,7 @@ with scraper:
 with viewer:
 	st.title("Images")
 
-	images_dir = "./images"
+	images_dir = "images"
 
 	# initialise the directory if it does not exist
 	if not os.path.isdir(images_dir):
