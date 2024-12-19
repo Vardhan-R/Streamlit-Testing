@@ -362,11 +362,19 @@ with viewer:
 
 	images_dir = "images"
 
-	# initialise the directory if it does not exist
-	if not os.path.isdir(images_dir):
-		os.mkdir(images_dir, 777)
+	root_dir = "images"
+	all_images = []
 
-	all_images = {os.path.join(images_dir, img) for img in os.listdir(images_dir) if img.endswith(".png")}
+	for dirpath, _, filenames in os.walk(root_dir):
+		for filename in filenames:
+			if filename.endswith(".png"):
+				all_images.append(os.path.join(dirpath, filename))
+
+	# # initialise the directory if it does not exist
+	# if not os.path.isdir(images_dir):
+	# 	os.mkdir(images_dir, 777)
+
+	# all_images = {os.path.join(images_dir, img) for img in os.listdir(images_dir) if img.endswith(".png")}
 
 	cols = st.columns([1, 1, 1])
 	for i, image_path in enumerate(all_images):
