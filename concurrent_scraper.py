@@ -376,6 +376,6 @@ with viewer:
 	# all_images = {os.path.join(images_dir, img) for img in os.listdir(images_dir) if img.endswith(".png")}
 
 	cols = st.columns([1, 1, 1])
-	for i, image_path in enumerate(all_images):
+	for i, image_path in enumerate(sorted(all_images)):
 		with cols[i % 3]:
 			st.image(image_path, caption=os.path.basename(image_path), use_container_width=True)
