@@ -280,11 +280,11 @@ def main(n: int, max_workers: int, width: int, height: int, parser: str) -> None
 	NO_PAGE_FOUND, NO_IMAGE_FOUND, GIF_FILE_FOUND, NO_RATING_FOUND = 1, 2, 3, 4 # reasons for not saving a post
 
 	# paths to the necessary directory and files
-	images_dir = ".\\images" # directory for the images
-	coms_txt = ".\\communication.txt" # for communication between this program and the Windows Powershell program exists ("0" iff there was an error in processing the previous posts, and "1" iff the next posts can be processed)
-	cntr_txt = ".\\next_post_id.txt" # to keep track of the post id of the next post to be processed
-	output_csv = ".\\data.csv" # stores the post id, hash code, rating and general tags
-	no_output_csv = ".\\did_not_save.csv" # stores the post id and reason for a post not being saved
+	images_dir = "./images" # directory for the images
+	coms_txt = "./communication.txt" # for communication between this program and the Windows Powershell program exists ("0" iff there was an error in processing the previous posts, and "1" iff the next posts can be processed)
+	cntr_txt = "./next_post_id.txt" # to keep track of the post id of the next post to be processed
+	output_csv = "./data.csv" # stores the post id, hash code, rating and general tags
+	no_output_csv = "./did_not_save.csv" # stores the post id and reason for a post not being saved
 
 	# initialise the directory if it does not exist
 	if not os.path.isdir(images_dir):
@@ -333,23 +333,42 @@ def main(n: int, max_workers: int, width: int, height: int, parser: str) -> None
 
 	print("End of Python program.")
 
-st.set_page_config("Scraper")
+st.set_page_config("Streamlit Testing")
 
-st.title("Scraper")
+scraper, viewer = st.tabs(["Scraper", "Viewer"])
 
-with st.form("args"):
-	try:
-		n = int(st.text_input("Number of images to process", 100))
-		max_workers = int(st.text_input("Maximum workers", 15))
-		width = int(st.text_input("Width", 128))
-		height = int(st.text_input("Height", 128))
-		parser = st.selectbox("Parser", ["lxml", "lxml-xml", "html.parser", "html5lib"])
-	except:
-		n = 100
-		max_workers = 15
-		width = 128
-		height = 128
-		parser = "lxml"
+with scraper:
+	st.title("Scraper")
 
-	if st.form_submit_button():
-		main(n, max_workers, width, height, parser)
+	with st.form("args"):
+		try:
+			n = int(st.text_input("Number of images to process", 100))
+			max_workers = int(st.text_input("Maximum workers", 15))
+			width = int(st.text_input("Width", 128))
+			height = int(st.text_input("Height", 128))
+			parser = st.selectbox("Parser", ["lxml", "lxml-xml", "html.parser", "html5lib"])
+		except:
+			n = 100
+			max_workers = 15
+			width = 128
+			height = 128
+			parser = "lxml"
+
+		if st.form_submit_button():
+			main(n, max_workers, width, height, parser)
+
+with viewer:
+	st.title("Images")
+
+	images_dir = "./images"
+
+	# initialise the directory if it does not exist
+	if not os.path.isdir(images_dir):
+		os.mkdir(images_dir, 711)
+
+	all_images = {os.path.join(images_dir, img) for img in os.listdir(images_dir) if img.endswith(".png")}
+
+	cols = st.columns([1, 1, 1])
+	for i, image_path in enumerate(all_images):
+		with cols[i % 3]:
+			st.image(image_path, caption=os.path.basename(image_path), use_column_width=True)
