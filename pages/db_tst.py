@@ -94,7 +94,7 @@ all_fetches = [
 
 if st.button("Connect"):
     if "my_cursor" not in st.session_state:
-        st.session_state.my_db = pymysql.connect(host="127.0.0.1", user="root", password="root")
+        st.session_state.my_db = pymysql.connect(host="192.168.209.81", user="root", password="root")
         st.session_state.my_cursor = st.session_state.my_db.cursor()
         st.success("Successfully connected!")
 
