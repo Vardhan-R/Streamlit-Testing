@@ -8,5 +8,4 @@ html.parser
 html5lib
 pymysql
 pymongo
-"pymongo[srv]"==3.12
 sqlalchemy
