@@ -6,4 +6,5 @@ st.title("Testing")
 
 pages = os.listdir("./pages")
 for page in pages:
-    st.page_link(os.path.join("./pages", page))
+    if page.endswith(".py"):
+        st.page_link(os.path.join("./pages", page))

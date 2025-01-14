@@ -1,4 +1,5 @@
 streamlit
+streamlit_cookies_manager
 beautifulsoup4
 pillow
 requests
@@ -6,3 +7,6 @@ lxml
 html.parser
 html5lib
 pymysql
+pymongo
+"pymongo[srv]"==3.12
+sqlalchemy
