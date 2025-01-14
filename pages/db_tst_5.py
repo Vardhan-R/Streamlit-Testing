@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 import random
 import streamlit as st
 
-def executeSQL(stmt: TextClause, engine: Engine, commit: bool = False, params: list[dict] | dict | None = None):
+def executeSQL(stmt: TextClause, engine: Engine, commit: bool = False, params: list[dict] | None = None):
     with Session(engine) as session:
         res = session.execute(stmt, params)
 

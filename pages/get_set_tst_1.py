@@ -1,11 +1,10 @@
 from pages.common.cookies_manager import initCookies
-# from pymongo import MongoClient
-# from pymongo.server_api import ServerApi
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import Session
+from pymongo import MongoClient
+from pymongo.server_api import ServerApi
+# from sqlalchemy import create_engine, text
+# from sqlalchemy.orm import Session
 import datetime
 import streamlit as st
-import time
 
 class Variable:
     def __init__(self, value, compute_function, name: str, index: int | None = None):
@@ -44,7 +43,7 @@ class Variable:
             return st.session_state[self.__name]
 
         # Step 2: Check if the variable is in MongoDB
-        user_session = session_collection.find_one({"_id": user_id})
+        user_session = collection.find_one({"_id": st.session_state.user_id})
         if user_session and self.__name in user_session:
             value = user_session[self.__name]
             st.session_state[self.__name] = value
@@ -56,8 +55,8 @@ class Variable:
 
         # Update or insert the value in MongoDB
         # datetime.datetime.fromtimestamp(time.time())
-        session_collection.update_one(
-            {"_id": user_id},
+        collection.update_one(
+            {"_id": st.session_state.user_id},
             {"$set": {self.__name: value, "last_updated": datetime.datetime.now()}},
             upsert=True
         )
@@ -105,19 +104,19 @@ if not cookies.ready():
     st.stop()
 
 if "engine" not in st.session_state:
-    # # MongoDB connection
-    # uri = "mongodb+srv://local_user:local_user@cluster0.217dt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-    # # Create a new client and connect to the server
-    # st.session_state.client = MongoClient(uri, server_api=ServerApi('1'))
+    # MongoDB connection
+    uri = "mongodb+srv://local_user:local_user@cluster0.217dt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    # Create a new client and connect to the server
+    st.session_state.client = MongoClient(uri, server_api=ServerApi('1'))
 
-    st.session_state.engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
+    # st.session_state.engine = create_engine("sqlite+pysqlite:///pages/common/databases/my_db_1.db", echo=True)
 
-    with Session(st.session_state.engine) as session:
-        session.execute(
-            text("INSERT INTO some_table (x, y) VALUES (:x, :y)"),
-            [{"x": 6, "y": 8}, {"x": 9, "y": 10}],
-        )
-        session.commit()
+    # with Session(st.session_state.engine) as session:
+    #     session.execute(
+    #         text("INSERT INTO some_table (x, y) VALUES (:x, :y)"),
+    #         [{"x": 6, "y": 8}, {"x": 9, "y": 10}],
+    #     )
+    #     session.commit()
 
 db_name = "username"
 collection_name = "workspace_name"
