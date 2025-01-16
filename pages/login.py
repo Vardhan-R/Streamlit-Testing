@@ -19,25 +19,31 @@ if not cookies.ready():
     st.error("Cookies not initialised yet.")
     st.stop()
 
+if cookies.get("user_id", "") != "":
+    # Already logged in
+    st.switch_page("./home.py")
+
+# if "user_id" in cookies:
+#     if cookies["user_id"] != "":
+#         # Already logged in
+#         st.switch_page("./home.py")
+
 if "engine" not in st.session_state:
     st.session_state.engine = create_engine("sqlite+pysqlite:///pages/common/databases/server_side.db", echo=True)
 
-if "username" in cookies:
-    st.title(f"Welcome {cookies["username"]}!")
-else:
-    st.title("Login")
+st.title("Login")
 
-    username = st.text_input("Username", max_chars=256)
-    password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        user_id = checkCredentials(username, password)
-        if user_id != "":
-            st.session_state.username = username
-            st.session_state.user_id = user_id
-            cookies["username"] = username  # Store the username in a cookie
-            cookies["user_id"] = user_id    # Store the user ID in a cookie
-            cookies.save()  # Save cookies
-            st.success("Logged in successfully!")
-            st.rerun()
-        else:
-            st.error("Invalid username or password.")
+username = st.text_input("Username", max_chars=256)
+password = st.text_input("Password", type="password")
+if st.button("Login"):
+    user_id = checkCredentials(username, password)
+    if user_id != "":
+        st.session_state.username = username
+        st.session_state.user_id = user_id
+        cookies["username"] = username  # Store the username in a cookie
+        cookies["user_id"] = user_id    # Store the user ID in a cookie
+        cookies.save()  # Save cookies
+        st.success("Logged in successfully!")
+        st.rerun()
+    else:
+        st.error("Invalid username or password.")

@@ -1,8 +1,7 @@
 from pages.common.cookies_manager import initCookies
-from pymongo import MongoClient
-from pymongo.server_api import ServerApi
-# from sqlalchemy import create_engine, text
-# from sqlalchemy.orm import Session
+from pages.common.databases_manager import executeSQL
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import Session
 import datetime
 import streamlit as st
 
@@ -42,24 +41,27 @@ class Variable:
         if self.__name in st.session_state:
             return st.session_state[self.__name]
 
-        # Step 2: Check if the variable is in MongoDB
-        user_session = collection.find_one({"_id": st.session_state.user_id})
-        if user_session and self.__name in user_session:
-            value = user_session[self.__name]
-            st.session_state[self.__name] = value
-            return value
+        # Step 2: Check if the variable is in the user's database
+        sql = "SELECT ... FROM ... WHERE ..."
+        params = None
+        res = executeSQL(sql, st.session_state.engine, params=params)
+        # user_session = collection.find_one({"_id": st.session_state.user_id})
+        # if user_session and self.__name in user_session:
+        #     value = user_session[self.__name]
+        #     st.session_state[self.__name] = value
+        #     return value
 
         # Step 3: Compute the variable, store it in session state and MongoDB
         value = self.__compute_func()
         st.session_state[self.__name] = value
 
-        # Update or insert the value in MongoDB
+        # Update or insert the value in the user's database
         # datetime.datetime.fromtimestamp(time.time())
-        collection.update_one(
-            {"_id": st.session_state.user_id},
-            {"$set": {self.__name: value, "last_updated": datetime.datetime.now()}},
-            upsert=True
-        )
+        # collection.update_one(
+        #     {"_id": st.session_state.user_id},
+        #     {"$set": {self.__name: value, "last_updated": datetime.datetime.now()}},
+        #     upsert=True
+        # )
 
         return value
 
@@ -103,28 +105,16 @@ if not cookies.ready():
     st.error("Cookies not initialised yet.")
     st.stop()
 
-if "client" not in st.session_state:
-    # MongoDB connection
-    uri = "mongodb+srv://local_user:local_user@cluster0.217dt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-    # Create a new client and connect to the server
-    st.session_state.client = MongoClient(uri, server_api=ServerApi('1'))
-
-    # st.session_state.engine = create_engine("sqlite+pysqlite:///pages/common/databases/my_db_1.db", echo=True)
-
-    # with Session(st.session_state.engine) as session:
-    #     session.execute(
-    #         text("INSERT INTO some_table (x, y) VALUES (:x, :y)"),
-    #         [{"x": 6, "y": 8}, {"x": 9, "y": 10}],
-    #     )
-    #     session.commit()
-
-db_name = "username"
-collection_name = "workspace_name"
-db = st.session_state.client[db_name]
-collection = db[collection_name]
-doc_count = collection.count_documents({})
-print(doc_count)
-
-var = Variable(17, 1, "")
-var.value = 21
-print(var.value)
+if cookies.get("user_id", "") != "" and "engine" not in st.session_state:
+    # Logged in
+    st.session_state.engine = create_engine(f"sqlite+pysqlite:///pages/common/databases/users/db_{cookies["user_id"]}.db", echo=True)
+    sql = """
+    CREATE TABLE IF NOT EXISTS ... (
+        ...,
+        ...,
+        ...
+    )
+    """
+    executeSQL(sql, st.session_state.engine, True)
+else:
+    st.switch_page("./home.py")

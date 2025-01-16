@@ -17,6 +17,10 @@ if not cookies.ready():
     st.error("Cookies not initialised yet.")
     st.stop()
 
+if cookies.get("user_id", "") != "":
+    # Already logged in
+    st.switch_page("./home.py")
+
 if "engine" not in st.session_state:
     st.session_state.engine = create_engine("sqlite+pysqlite:///pages/common/databases/server_side.db", echo=True)
 
